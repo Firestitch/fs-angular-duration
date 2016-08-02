@@ -19,12 +19,12 @@
 
 
                 $scope.$watch('time',function(time) {
-                    
+               
                   $scope.unit = $scope.unit || 'second';
                   $scope.abr = $scope.abr === 'true';
                   $scope.round = $scope.round === 'true';
 
-                  if($scope.unit=='minute') {
+                  if(time && $scope.unit=='minute') {
                     time = parseInt(time) * 60;
                   }
 
@@ -106,16 +106,12 @@
                             day: 2628028,       //30.417 days
                             month: 15768172 };  //6 months
 
-            if(time==='') {
-                return '';
+            if((typeof time!='string' && typeof time!='number') || !parseInt(time)) {
+                return '0' + (options.abr ? "s" : plural(['second','seconds'],0));
             }
 
             time = parseInt(time);
 
-            if(time===0) {
-                return 'now';
-            }          
-          
             if(time<=limits.second)
                 return time + (options.abr ? "s" : plural(['second','seconds'],time)) + options.suffix;
 

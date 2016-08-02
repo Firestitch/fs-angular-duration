@@ -18,12 +18,12 @@
 
 
                 $scope.$watch('time',function(time) {
-                    
+               
                   $scope.unit = $scope.unit || 'second';
                   $scope.abr = $scope.abr === 'true';
                   $scope.round = $scope.round === 'true';
 
-                  if($scope.unit=='minute') {
+                  if(time && $scope.unit=='minute') {
                     time = parseInt(time) * 60;
                   }
 
