@@ -1,0 +1,16 @@
+{
+  "name": "fs-angular-duration", 
+  "description": "",
+  "main": [
+    "dist/duration.js"
+  ],
+  "authors": [
+    "Firestitch Inc."
+  ],
+  "license": "MIT",
+  "ignore": [
+    "src",
+    ".gitignore"
+  ],
+  "private": false
+}
