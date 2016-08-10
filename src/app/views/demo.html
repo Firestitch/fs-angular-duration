@@ -1,1 +1,9 @@
-<fs-duration fs-time="time" fs-abr="true" fs-round="true" fs-unit="minute"></fs-duration>
+<div>
+	<fs-duration fs-time="time" fs-abr="true" fs-round="true" fs-limit-hour="300000"></fs-duration> - {{time}} seconds
+</div>
+<div>
+	<fs-duration fs-time="time" fs-abr="true" fs-round="true" fs-unit="hour" fs-limit-hour="300000"></fs-duration> - {{time}} hours
+</div>
+<div>
+	<fs-duration fs-time="time" fs-abr="true" fs-unit="hour"></fs-duration> - {{time}} hours
+</div>

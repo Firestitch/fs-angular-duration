@@ -4,7 +4,7 @@
 angular.module('app')
   .controller('DemoCtrl', function ($interval,$scope) {
 
-    $scope.time = 30;
+    $scope.time = 3000;
 
 	$interval(function() {
 		//$scope.time += 15200;

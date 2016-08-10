@@ -2,17 +2,15 @@
     'use strict';
 
     /**
-     * @ngdoc interface
-     * @name app.services:prettytimeService
-     * @description Demo: <a href="http://firestitch.github.io/fs-angular-demos/#/prettytime">http://firestitch.github.io/fs-angular-demos/#/prettytime</a>
+     * @ngdoc service
+     * @name fs.fsDuration
      */
 
     angular.module('fs-angular-duration')
     .factory('fsDuration', function () {
        
         var service = {        
-            format:format,
-            formatTimestamp: formatTimestamp
+            format:format
         };
        
         return service;
@@ -26,53 +24,50 @@
         /**
          * @ngdoc method
          * @name format
-         * @methodOf app.services:prettytimeService
-         * @param {number|date} timestamp A numeric timestamp or a Date object
-         * @param {bool=} [round=true] Rounds the pretty time. ie: 5d 12h (not rounded) 5d (rounded) 
-         * @param {bool=} [abr=true] Abbriviate the units of measurement. ie: 5d (abbreviated) 5 days (not abbreviated) 
-         * @param {bool=} [suffix=false] add the word 'ago' or 'from now' to the end of the pretty string
-         * @description Accepts a difference in time and return a pretty formated version ie. 6566533 = 7 days
-         */
-        function formatTimestamp(timestamp,round,abr,suffix) {
-            
-            if(timestamp instanceof Date)
-                timestamp = timestamp.getTime()/1000;           
+         * @methodOf fs.fsDuration
+         * @param {number} time Time represented in the specified units
+         * @param {string} options.unit The unit used to measure time (second, minute)
+         * @param {object} options &nbsp;
+         * @param {bool} options.round Drop the remainder ie. 5h 2m = 5h
+         * @param {bool} options.abr Use the full word or abbreviation ie. hr vs. hours
+         * @param {bool} options.suffix Adds 'ago' or 'from now' 
+         * @param {object} options.limits The upper limits of each unit
+                <ul>
+                    <li><label>second</label>60</li>
+                    <li><label>minute</label>60</li>
+                    <li><label>hour</label>24</li>
+                    <li><label>day</label>30.5</li>
+                </ul>
 
-            var now = (new Date()).getTime()/1000;
-
-            return format(now - timestamp,round,abr,suffix);
-        }
-
-        /**
-         * @ngdoc method
-         * @name format
-         * @methodOf app.services:prettytimeService
-         * @param {number} timestamp A numeric timestamp
-         * @param {bool=} [round=true] Rounds the pretty time. ie: 5d 12h (not rounded) 5d (rounded) 
-         * @param {bool=} [abr=true] Abbriviate the units of measurement. ie: 5d (abbreviated) 5 days (not abbreviated) 
-         * @param {bool=} [suffix=false] add the word 'ago' or 'from now' to the end of the pretty string
-         * @description Accepts a difference in time and return a pretty formated version ie. 6566533 = 7 days
          */
         function format(time,options) {
 
             options = options || {};
+
             options.round = options.round===undefined ? false : options.round;
+            options.unit = options.unit===undefined ? 'second' : options.unit;
             options.abr = options.abr===undefined ? true : options.abr;
             options.suffix = options.suffix===true ? (time>0 ? " ago" : " from now") : "";
 
-            var limits = {  second: 60,         //60 seconds
-                            minute: 3600,       //1 hour
-                            hour: 86400,        //24 hours
-                            day: 2628028,       //30.417 days
-                            month: 15768172 };  //6 months
+            options.limits = options.limits || {};
+            options.limits.second = options.limits.second || 60;
+            options.limits.minute = options.limits.minute || 60;
+            options.limits.hour = options.limits.hour || 24;
+            options.limits.day = options.limits.day || 30.5;
 
+            if(options.unit=='minute') {
+                time = time * 60;
+            } else if(options.unit=='hour') {
+                time = time * 60 * 60;
+            }
+            
             if((typeof time!='string' && typeof time!='number') || !parseInt(time)) {
                 return '0' + (options.abr ? "s" : plural(['second','seconds'],0));
             }
 
             time = parseInt(time);
 
-            if(time<=limits.second)
+            if(time<=options.limits.second)
                 return time + (options.abr ? "s" : plural(['second','seconds'],time)) + options.suffix;
 
             var remainder_seconds = Math.floor(time % 60);
@@ -82,40 +77,40 @@
 
             var minutes = Math.round(time/60);
 
-            if(time<=limits.minute)
+            if(time<=(options.limits.minute * 60))
                 return minutes + (options.abr ? "m" : plural(['minute','minutes'],minutes)) + (options.round || !remainder_seconds ? '' : ' ' + remainder_seconds) + options.suffix;
         
             var hours = time / 3600;
             hours = options.round ? Math.round(hours) : Math.floor(hours);
 
-            var remainder_minutes = Math.floor((time % limits.minute)/60);
+            var remainder_minutes = Math.floor((time % (options.limits.minute * 60))/60);
             if(remainder_minutes) {
                 remainder_minutes = remainder_minutes + (options.abr ? "m" : plural(['minute','minutes'],remainder_minutes));
             }
 
-            if(time<=limits.hour)
+            if(time<=(options.limits.hour * 60 * 60))
                 return hours + (options.abr ? "h" : plural(['hour','hours'],hours)) + (options.round || !remainder_minutes ? '' : ' ' + remainder_minutes) + options.suffix;
             
             var days = time / 3600 / 24;
             days = options.round ? Math.round(days) : Math.floor(days);
 
-            var remainder_hours = Math.floor((time % limits.hour)/60/60);
+            var remainder_hours = Math.floor((time % (options.limits.hour * 60 * 60))/60/60);
             if(remainder_hours) {
                 remainder_hours = remainder_hours + (options.abr ? "h" : plural(['hour','hours'],remainder_hours));          
             }
 
-            if(time<=limits.day)
+            if(time<=(options.limits.day * 60 * 60 * 24))
                 return days + (options.abr ? "d" : plural(['day','days'],days,false)) + (options.round || !remainder_hours ? '' : ' ' + remainder_hours) + options.suffix;   
 
             var months = time / 3600 / 24 / 30.417;
             months = options.round ? Math.round(months) : Math.floor(months);         
 
-            var remainder_days = Math.floor((time % limits.day)/60/60/24);
+            var remainder_days = Math.floor((time % (options.limits.day * 60 * 60 * 24))/60/60/24);
             if(remainder_days) {
                 remainder_days = remainder_days + (options.abr ? "d" : plural(['day','days'],remainder_days,false));            
             }
 
-            return months + (options.abr ? "m" : plural(['month','months'],months,false)) + (options.round || !remainder_days ? '' : ' ' + remainder_days) + options.suffix;  
+            return months + (options.abr ? "M" : plural(['month','months'],months,false)) + (options.round || !remainder_days ? '' : ' ' + remainder_days) + options.suffix;  
         }
     });
 })();
