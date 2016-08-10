@@ -1,4 +1,3 @@
-
 (function () {
     'use strict';
 
@@ -40,23 +39,23 @@
                 
                   var options = { unit: $scope.unit,
                                   remainder: $scope.remainder,
-                                  abr: $scope.abr,
-                                  suffix: $scope.suffix,
+                                  abr: $scope.abr==='true',
+                                  suffix: $scope.suffix==='true',
                                   limits: {} };
 
-                  if($scope.limitSecond) {
+                  if($scope.limitSecond!==undefined) {
                     options.limits.second = parseInt($scope.limitSecond);
                   }
 
-                  if($scope.limitMinute) {
+                  if($scope.limitMinute!==undefined) {
                     options.limits.minute = parseInt($scope.limitMinute);
                   }
 
-                  if($scope.limitHour) {
+                  if($scope.limitHour!==undefined) {
                     options.limits.hour = parseInt($scope.limitHour);
                   }
 
-                  if($scope.limitDay) {
+                  if($scope.limitDay!==undefined) {
                     options.limits.day = parseInt($scope.limitDay);
                   }
 

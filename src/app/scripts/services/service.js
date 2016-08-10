@@ -1,4 +1,3 @@
-
 (function () {
     'use strict';
 
@@ -67,10 +66,6 @@
             } else if(options.unit=='hour') {
                 time = time * 60 * 60;
             }
-   
-            if((typeof time!='string' && typeof time!='number') || !parseInt(time)) {
-                return '0' + (options.abr ? "s" : plural(['second','seconds'],0));
-            }
 
             time = parseInt(time);
 
@@ -121,4 +116,5 @@
         }
     });
 })();
+
 

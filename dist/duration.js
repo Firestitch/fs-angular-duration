@@ -1,5 +1,4 @@
 
-
 (function () {
     'use strict';
 
@@ -41,23 +40,23 @@
                 
                   var options = { unit: $scope.unit,
                                   remainder: $scope.remainder,
-                                  abr: $scope.abr,
-                                  suffix: $scope.suffix,
+                                  abr: $scope.abr==='true',
+                                  suffix: $scope.suffix==='true',
                                   limits: {} };
 
-                  if($scope.limitSecond) {
+                  if($scope.limitSecond!==undefined) {
                     options.limits.second = parseInt($scope.limitSecond);
                   }
 
-                  if($scope.limitMinute) {
+                  if($scope.limitMinute!==undefined) {
                     options.limits.minute = parseInt($scope.limitMinute);
                   }
 
-                  if($scope.limitHour) {
+                  if($scope.limitHour!==undefined) {
                     options.limits.hour = parseInt($scope.limitHour);
                   }
 
-                  if($scope.limitDay) {
+                  if($scope.limitDay!==undefined) {
                     options.limits.day = parseInt($scope.limitDay);
                   }
 
@@ -67,7 +66,6 @@
         };
     });
 })();
-
 (function () {
     'use strict';
 
@@ -136,10 +134,6 @@
             } else if(options.unit=='hour') {
                 time = time * 60 * 60;
             }
-   
-            if((typeof time!='string' && typeof time!='number') || !parseInt(time)) {
-                return '0' + (options.abr ? "s" : plural(['second','seconds'],0));
-            }
 
             time = parseInt(time);
 
@@ -190,5 +184,6 @@
         }
     });
 })();
+
 
 
