@@ -1,3 +1,4 @@
+
 (function () {
     'use strict';
 
@@ -23,43 +24,40 @@
             restrict: 'E',
             scope: {
                time: "=fsTime",
-               round: "@?fsRound",
+               remainder: "@?fsRemainder",
                abr: "@?fsAbr",
                suffix: "@?fsSuffix",
                unit: "@?fsUnit",
-               limitSecond: "@?limitSecond",
-               limitMinute: "@?limitMinute",
+               limitSecond: "@?fsLimitSecond",
+               limitMinute: "@?fsLimitMinute",
                limitHour: "@?fsLimitHour",
-               limitDay: "@?limitDay"
+               limitDay: "@?fsLimitDay"
             },
 
             controller: function($scope) {
 
                 $scope.$watch('time',function(time) {
-               
-                  $scope.abr = $scope.abr === 'true';
-                  $scope.round = $scope.round === 'true';
-
+                
                   var options = { unit: $scope.unit,
-                                  round: $scope.round,
+                                  remainder: $scope.remainder,
                                   abr: $scope.abr,
                                   suffix: $scope.suffix,
                                   limits: {} };
 
                   if($scope.limitSecond) {
-                    options.limits.second = $scope.limitSecond;
+                    options.limits.second = parseInt($scope.limitSecond);
+                  }
+
+                  if($scope.limitMinute) {
+                    options.limits.minute = parseInt($scope.limitMinute);
                   }
 
                   if($scope.limitHour) {
-                    options.limits.minute = $scope.limitMinute;
-                  }
-
-                  if($scope.limitHour) {
-                    options.limits.hour = $scope.limitHour;
+                    options.limits.hour = parseInt($scope.limitHour);
                   }
 
                   if($scope.limitDay) {
-                    options.limits.day = $scope.limitDay;
+                    options.limits.day = parseInt($scope.limitDay);
                   }
 
                   $scope.duration = fsDuration.format(time,options);
