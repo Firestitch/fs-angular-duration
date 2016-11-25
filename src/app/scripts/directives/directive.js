@@ -32,7 +32,7 @@
 
 				$scope.$watch('model',function(model) {
 					if(model) {
-						$scope.input = fsDate.duration(model * 60);
+						$scope.input = fsDate.duration(model * 60, { limits: { hour: 99999 }});
 					}
 				});
 
@@ -43,7 +43,7 @@
 						$scope.model = parseMinutes(value);
 
 						if($scope.model) {
-							value = fsDate.duration($scope.model * 60);
+							value = fsDate.duration($scope.model * 60, { limits: { hour: 99999 }});
 						}
 
 					} catch(e) {}
