@@ -1,9 +1,13 @@
 {
-  "name": "fs-angular-duration", 
+  "name": "fs-angular-duration",
   "description": "",
   "main": [
     "dist/duration.js"
   ],
+  "dependencies": {
+    "fs-angular-util": "latest",
+    "fs-angular-date": "latest"
+  },
   "authors": [
     "Firestitch Inc."
   ],

@@ -1,0 +1,13 @@
+<md-input-container class="{{class}}">
+	<label ng-show="label">{{label}}</label>
+	<input 	type="text"
+			ng-model="input"
+			aria-label="duration"
+			ng-disabled="disabled"
+			ng-model-options="{ updateOn: 'blur' }"
+			ng-change="change()"
+			ng-required="{{required}}"
+			name="{{name}}"
+			custom="validate">
+</md-input-container>
+<input type="hidden" ng-model="model">

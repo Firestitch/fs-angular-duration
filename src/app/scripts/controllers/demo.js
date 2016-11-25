@@ -4,11 +4,17 @@
 angular.module('app')
   .controller('DemoCtrl', function ($interval,$scope) {
 
-    $scope.time = 3000;
+    $scope.submit = function() {
+    	alert('Submitted');
+    }
 
-	$interval(function() {
-		//$scope.time += 15200;
-	}, 1000);    
-    
+	$scope.disabled = true;
+    $scope.enable = function() {
+    	$scope.disabled = false;
+    	$scope.label = 'Duration';
+    }
+
+
+
 });
 

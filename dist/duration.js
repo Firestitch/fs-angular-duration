@@ -6,184 +6,122 @@
    * @ngdoc directive
    * @name fs.directives:fs-duration
    * @restrict E
-   * @param {int} fsTime {@link fs.fsDuration}
-   * @param {string} fsUnit {@link fs.fsDuration}
-   * @param {bool} fsRound {@link fs.fsDuration}
-   * @param {bool} fsAbr {@link fs.fsDuration}
-   * @param {bool} fsSuffix {@link fs.fsDuration}   
-   * @param {int} limitSecond {@link fs.fsDuration}
-   * @param {int} limitMinute {@link fs.fsDuration}
-   * @param {int} limitHour {@link fs.fsDuration}
-   * @param {int} limitDay {@link fs.fsDuration}
+   * @param {object} fsModel The modal object. The format should be in minnutes
+   * @param {string} fsLabel The input label
+   * @param {expression} fsDisabled An expression to enable/disable the input
+   * @param {expression} fsRequired An expression to require the input for valiation
    */
 
-    angular.module('fs-angular-duration',[])
-    .directive('fsDuration', function(fsDuration) {
+    angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util'])
+    .directive('fsDuration', function(fsDate, fsUtil) {
         return {
-            template: '{{duration}}',
+            templateUrl: 'views/directives/duration.html',
             restrict: 'E',
             scope: {
-               time: "=fsTime",
-               remainder: "@?fsRemainder",
-               abr: "@?fsAbr",
-               suffix: "@?fsSuffix",
-               unit: "@?fsUnit",
-               limitSecond: "@?fsLimitSecond",
-               limitMinute: "@?fsLimitMinute",
-               limitHour: "@?fsLimitHour",
-               limitDay: "@?fsLimitDay"
+              model: '=?fsModel',
+              label: '@?fsLabel',
+              disabled: '=?fsDisabled',
+              required: '=?fsRequired'
             },
-
+            link: function($scope, element) {
+            	angular.element(element[0].querySelector("input[type='text']")).data('scope',$scope);
+            },
             controller: function($scope) {
 
-                $scope.$watch('time',function(time) {
-                
-                  var options = { unit: $scope.unit,
-                                  remainder: $scope.remainder,
-                                  abr: $scope.abr==='true',
-                                  suffix: $scope.suffix==='true',
-                                  limits: {} };
+				$scope.name = 'input_' + fsUtil.guid();
+				$scope.input = '';
 
-                  if($scope.limitSecond!==undefined) {
-                    options.limits.second = parseInt($scope.limitSecond);
-                  }
+				$scope.$watch('model',function(model) {
+					if(model) {
+						$scope.input = fsDate.duration(model * 60);
+					}
+				});
 
-                  if($scope.limitMinute!==undefined) {
-                    options.limits.minute = parseInt($scope.limitMinute);
-                  }
+				$scope.change = function() {
+					var value = $scope.input;
+					try {
 
-                  if($scope.limitHour!==undefined) {
-                    options.limits.hour = parseInt($scope.limitHour);
-                  }
+						$scope.model = parseMinutes(value);
 
-                  if($scope.limitDay!==undefined) {
-                    options.limits.day = parseInt($scope.limitDay);
-                  }
+						if($scope.model) {
+							value = fsDate.duration($scope.model * 60);
+						}
 
-                  $scope.duration = fsDuration.format(time,options);
-                });
+					} catch(e) {}
+					$scope.input = value;
+				}
+
+				$scope.validate = function(value) {
+
+					try {
+						parseMinutes(value);
+					} catch(e) {
+						return e;
+					}
+
+					return true;
+				}
+
+	            function parseMinutes(string) {
+
+					if(!string)
+					  	return 0;
+
+					var string = new String(string);
+					var matches = string.trim().match(/(\d+(?:\.\d*)?)([mh])/g);
+
+					if(!matches || matches.join('')!==string.replace(/\s/,''))
+					  	throw 'Invalid duration format';
+
+					var minutes = 0;
+					angular.forEach(matches,function(item) {
+					 	var time = item.match(/(\d+(?:\.\d*)?)([mh])/);
+
+					 	if(time) {
+					    	if(time[2]==='h') {
+					        	minutes += parseFloat(time[1]) * 60;
+					      	} else if(time[2]==='m') {
+					        	minutes += parseFloat(time[1]);
+					      	}
+					  	}
+					});
+
+					return minutes;
+	            }
             }
         };
     });
 })();
-(function () {
-    'use strict';
 
-    /**
-     * @ngdoc service
-     * @name fs.fsDuration
-     */
+angular.module('fs-angular-duration').run(['$templateCache', function($templateCache) {
+  'use strict';
 
-    angular.module('fs-angular-duration')
-    .factory('fsDuration', function () {
-       
-        var service = {        
-            format:format
-        };
-       
-        return service;
+  $templateCache.put('views/directives/duration.html',
+    "<md-input-container class=\"{{class}}\">\r" +
+    "\n" +
+    "\t<label ng-show=\"label\">{{label}}</label>\r" +
+    "\n" +
+    "\t<input \ttype=\"text\"\r" +
+    "\n" +
+    "\t\t\tng-model=\"input\"\r" +
+    "\n" +
+    "\t\t\taria-label=\"duration\"\r" +
+    "\n" +
+    "\t\t\tng-disabled=\"disabled\"\r" +
+    "\n" +
+    "\t\t\tng-model-options=\"{ updateOn: 'blur' }\"\r" +
+    "\n" +
+    "\t\t\tng-change=\"change()\"\r" +
+    "\n" +
+    "\t\t\tng-required=\"{{required}}\"\r" +
+    "\n" +
+    "\t\t\tname=\"{{name}}\"\r" +
+    "\n" +
+    "\t\t\tcustom=\"validate\">\r" +
+    "\n" +
+    "</md-input-container>\r" +
+    "\n" +
+    "<input type=\"hidden\" ng-model=\"model\">"
+  );
 
-        function plural(words,count) {
-            if(count==1)
-                return ' ' + words[0];
-            return ' ' + words[1];
-        }
-
-        function round(number, precision) {
-            var factor = Math.pow(10, precision);
-            var tempNumber = number * factor;
-            var roundedTempNumber = Math.round(tempNumber);
-            return roundedTempNumber / factor;
-        };
-
-
-        /**
-         * @ngdoc method
-         * @name format
-         * @methodOf fs.fsDuration
-         * @param {number} time Time represented in the specified units
-         * @param {string} options.unit The unit used to measure time (second, minute)
-         * @param {object} options &nbsp;
-         * @param {bool} options.remainder Use a decimal or string for the remainder
-         * @param {bool} options.abr Use the full word or abbreviation ie. hr vs. hours
-         * @param {bool} options.suffix Adds 'ago' or 'from now' 
-         * @param {object} options.limits The upper limits of each unit
-                <ul>
-                    <li><label>second</label>60</li>
-                    <li><label>minute</label>60</li>
-                    <li><label>hour</label>24</li>
-                    <li><label>day</label>30.5</li>
-                </ul>
-         */
-        function format(time,options) {
-
-            options = options || {};
-            options.remainder = options.remainder===undefined ? 'decimal' : options.remainder;
-            options.unit = options.unit===undefined ? 'second' : options.unit;
-            options.abr = options.abr===undefined ? true : options.abr;
-            options.suffix = options.suffix===true ? (time>0 ? " ago" : " from now") : "";
-
-            options.limits = options.limits || {};
-            options.limits.second = options.limits.second===undefined ? 60 : options.limits.second;
-            options.limits.minute = options.limits.minute===undefined ? 60 : options.limits.minute;
-            options.limits.hour = options.limits.hour===undefined ? 24 : options.limits.hour;
-            options.limits.day = options.limits.day===undefined ? 30.5 : options.limits.day;
-
-            if(options.unit=='minute') {
-                time = time * 60;
-            } else if(options.unit=='hour') {
-                time = time * 60 * 60;
-            }
-
-            time = parseInt(time);
-
-            if(time<options.limits.second)
-                return time + (options.abr ? "s" : plural(['second','seconds'],time)) + options.suffix;
-
-            var remainder_seconds = Math.floor(time % 60);
-            if(remainder_seconds) {
-                remainder_seconds = remainder_seconds + (options.abr ? "s" : plural(['second','seconds'],remainder_seconds));
-            }
-
-            var minutes = options.remainder=='decimal' ? round(time/60,1) : Math.floor(time/60);
-
-            if(time<(options.limits.minute * 60))
-                return minutes + (options.abr ? "m" : plural(['minute','minutes'],minutes)) + (options.remainder=='string' && remainder_seconds ? ' ' + remainder_seconds : '') + options.suffix;
-
-            var hours = time / 3600;
-            hours = options.remainder=='decimal' ? round(hours,1) : Math.floor(hours);
-
-            var remainder_minutes = Math.floor((time % (options.limits.minute * 60))/60);
-            if(remainder_minutes) {
-                remainder_minutes = remainder_minutes + (options.abr ? "m" : plural(['minute','minutes'],remainder_minutes));
-            }
-
-            if(time<(options.limits.hour * 60 * 60))
-                return hours + (options.abr ? "h" : plural(['hour','hours'],hours)) + (options.remainder=='string' && remainder_minutes ? ' ' + remainder_minutes : '') + options.suffix;
-            
-            var days = time / 3600 / 24;
-            days = options.remainder=='decimal' ? round(days,1) : Math.floor(days);
-
-            var remainder_hours = Math.floor((time % (options.limits.hour * 60 * 60))/60/60);
-            if(remainder_hours) {
-                remainder_hours = remainder_hours + (options.abr ? "h" : plural(['hour','hours'],remainder_hours));
-            }
-
-            if(time<(options.limits.day * 60 * 60 * 24))
-                return days + (options.abr ? "d" : plural(['day','days'],days,false)) + (options.remainder=='string' && remainder_hours ? ' ' + remainder_hours : '') + options.suffix;
-
-            var months = time / 3600 / 24 / 30.417;
-            months = options.remainder=='decimal' ? round(months,1) : Math.floor(months);         
-
-            var remainder_days = Math.floor((time % (options.limits.day * 60 * 60 * 24))/60/60/24);
-            if(remainder_days) {
-                remainder_days = remainder_days + (options.abr ? "d" : plural(['day','days'],remainder_days,false));
-            }
-
-            return months + (options.abr ? "M" : plural(['month','months'],months,false)) + (options.remainder=='string' && remainder_days ? ' ' + remainder_days : '') + options.suffix;
-        }
-    });
-})();
-
-
-
+}]);
