@@ -32,7 +32,7 @@
 
 				$scope.$watch('model',function(model) {
 					if(model) {
-						$scope.input = fsDate.duration(model * 60, { limits: { hour: 99999 }});
+						$scope.input = fsDate.duration(model * 60, { seconds: 0, remainder: 'string'});
 					}
 				});
 
@@ -43,7 +43,7 @@
 						$scope.model = parseMinutes(value);
 
 						if($scope.model) {
-							value = fsDate.duration($scope.model * 60, { limits: { hour: 99999 }});
+							value = fsDate.duration($scope.model * 60, { second: 0, remainder: 'string' });
 						}
 
 					} catch(e) {}
@@ -67,25 +67,33 @@
 					  	return 0;
 
 					var string = new String(string);
-					var matches = string.trim().match(/(\d+(?:\.\d*)?)([mh])/g);
+					var chunks = string.trim().match(/(\d+)[YyMdhms]?/g);
 
-					if(!matches || matches.join('')!==string.replace(/\s/,''))
+					if(!chunks || chunks.length==0)
 					  	throw 'Invalid duration format';
 
-					var minutes = 0;
-					angular.forEach(matches,function(item) {
-					 	var time = item.match(/(\d+(?:\.\d*)?)([mh])/);
+					var seconds = 0;
+					angular.forEach(chunks, function(chunk) {
+						var matches = chunk.match(/(\d+)([YMdhms]?)/);
 
-					 	if(time) {
-					    	if(time[2]==='h') {
-					        	minutes += parseFloat(time[1]) * 60;
-					      	} else if(time[2]==='m') {
-					        	minutes += parseFloat(time[1]);
-					      	}
-					  	}
+						if(matches.length==3) {
+							var unit = matches[2] ? matches[2] : 'm';
+							var factor = {
+								Y:60*60*24*365,
+								M:60*60*24*30.5,
+								d:60*60*24,
+								h:60*60,
+								m:60,
+								s:1
+							}[unit];
+
+							seconds += matches[1]*factor;
+						} else {
+							throw 'Invalid duration format';
+						}
 					});
 
-					return minutes;
+					return seconds/60;
 	            }
             }
         };

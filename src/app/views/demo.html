@@ -7,4 +7,14 @@
 	<md-button type="submit">Submit</md-button>
 
 	<a href ng-click="enable()">Enable</a>{{disabled}}
+
+
+<br/><br/><br/>
+	Prefill tests<br/><br/>
+	<div ng-repeat="dur in durations">
+		minutes: {{dur.mins}}    goal: {{dur.goal}}<br/>
+		<fs-duration fs-label="test1" fs-model="dur.mins"></fs-duration>
+	</div>
+
+
 </form>
