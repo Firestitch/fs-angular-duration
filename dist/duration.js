@@ -10,6 +10,7 @@
    * @param {string} fsLabel The input label
    * @param {expression} fsDisabled An expression to enable/disable the input
    * @param {expression} fsRequired An expression to require the input for valiation
+   * @param {expression} fsOptions Options to pass to fsDate.duration for formatting the display value
    */
 
     angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util'])
@@ -21,19 +22,26 @@
               model: '=?fsModel',
               label: '@?fsLabel',
               disabled: '=?fsDisabled',
-              required: '=?fsRequired'
+              required: '=?fsRequired',
+              options: '=?fsOptions'
             },
             link: function($scope, element) {
             	angular.element(element[0].querySelector("input[type='text']")).data('scope',$scope);
             },
             controller: function($scope) {
 
+            	var options = $scope.options || {};
+            	options.remainder = typeof options.remainder!='undefined' ? options.remainder : 'string';
+            	options.seconds = typeof options.seconds!='undefined' ? options.seconds : false;
+            	options.months = typeof options.months!='undefined' ? options.months : false;
+            	options.years = typeof options.years!='undefined' ? options.years : false;
+
 				$scope.name = 'input_' + fsUtil.guid();
 				$scope.input = '';
 
 				$scope.$watch('model',function(model) {
 					if(model) {
-						$scope.input = fsDate.duration(model * 60, { seconds: 0, remainder: 'string'});
+						$scope.input = fsDate.duration(model * 60, options);
 					}
 				});
 
@@ -44,7 +52,7 @@
 						$scope.model = parseMinutes(value);
 
 						if($scope.model) {
-							value = fsDate.duration($scope.model * 60, { second: 0, remainder: 'string' });
+							value = fsDate.duration($scope.model * 60, options);
 						}
 
 					} catch(e) {}
@@ -68,14 +76,15 @@
 					  	return 0;
 
 					var string = new String(string);
-					var chunks = string.trim().match(/(\d+)[YyMdhms]?/g);
+					var chunks = string.trim().match(/(\d*\.?\d*) ?[YyMdhms]?/g);
 
 					if(!chunks || chunks.length==0)
 					  	throw 'Invalid duration format';
 
 					var seconds = 0;
 					angular.forEach(chunks, function(chunk) {
-						var matches = chunk.match(/(\d+)([YMdhms]?)/);
+
+						var matches = chunk.match(/(\d*\.?\d*) ?([YMdhms]?)/);
 
 						if(matches.length==3) {
 							var unit = matches[2] ? matches[2] : 'm';
