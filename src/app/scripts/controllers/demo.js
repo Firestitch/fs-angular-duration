@@ -8,10 +8,10 @@
     	alert('Submitted');
     }
 
-	$scope.disabled = true;
-    $scope.enable = function() {
-    	$scope.disabled = false;
-    	$scope.label = 'Duration';
+	$scope.label = 'Duration!';
+	$scope.disabled = false;
+    $scope.toggle = function() {
+    	$scope.disabled = !$scope.disabled;
     }
 
     $scope.durations = [

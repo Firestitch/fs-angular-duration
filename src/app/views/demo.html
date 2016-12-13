@@ -1,20 +1,20 @@
 
 <form fs-validate="submit()">
-	<fs-duration fs-label="{{label}}" fs-model="duration" fs-required="required" fs-disabled="disabled"></fs-duration>
+	<fs-duration fs-label="{{label}}" fs-model="duration" fs-required="required" fs-disabled="disabled" fs-class="md-no-message"></fs-duration>
 
 	<h3>{{duration}}</h3>
 
 	<md-button type="submit">Submit</md-button>
 
-	<a href ng-click="enable()">Enable</a>{{disabled}}
+	<a href ng-click="toggle()">Toggle</a>
 
 
-<br/><br/><br/>
+<!-- <br/><br/><br/>
 	Prefill tests<br/><br/>
 	<div ng-repeat="dur in durations">
 		minutes: {{dur.mins}}    goal: {{dur.goal}}<br/>
 		<fs-duration fs-label="test1" fs-model="dur.mins" fs-options="{years:false,months:false}"></fs-duration>
 	</div>
-
+ -->
 
 </form>

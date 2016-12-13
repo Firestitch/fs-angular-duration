@@ -7,6 +7,7 @@
    * @restrict E
    * @param {object} fsModel The modal object. The format should be in minnutes
    * @param {string} fsLabel The input label
+   * @param {string} fsClass The css class pass on to the md-input-container
    * @param {expression} fsDisabled An expression to enable/disable the input
    * @param {expression} fsRequired An expression to require the input for valiation
    * @param {expression} fsOptions Options to pass to fsDate.duration for formatting the display value
@@ -17,12 +18,14 @@
         return {
             templateUrl: 'views/directives/duration.html',
             restrict: 'E',
+            replace: true,
             scope: {
               model: '=?fsModel',
               label: '@?fsLabel',
               disabled: '=?fsDisabled',
               required: '=?fsRequired',
-              options: '=?fsOptions'
+              options: '=?fsOptions',
+              class: '@?fsClass'
             },
             link: function($scope, element) {
             	angular.element(element[0].querySelector("input[type='text']")).data('scope',$scope);
@@ -30,38 +33,34 @@
             controller: function($scope) {
 
             	var options = $scope.options || {};
-            	options.remainder = typeof options.remainder!='undefined' ? options.remainder : 'string';
-            	options.seconds = typeof options.seconds!='undefined' ? options.seconds : false;
-            	options.months = typeof options.months!='undefined' ? options.months : false;
-            	options.years = typeof options.years!='undefined' ? options.years : false;
+            	options.remainder = options.remainder===undefined ? 'string' : options.remainder;
+            	options.seconds = options.seconds===undefined ? false: options.seconds;
+            	options.months = options.months===undefined ? false : options.months;
+            	options.years = options.years===undefined ? false : options.years;
+            	options.precision = options.precision===undefined ? false : options.precision;
 
 				$scope.name = 'input_' + fsUtil.guid();
 				$scope.input = '';
-
-				$scope.$watch('model',function(model) {
-					if(model) {
-						$scope.input = fsDate.duration(model * 60, options);
-					}
-				});
 
 				$scope.change = function() {
 					var value = $scope.input;
 					try {
 
-						$scope.model = parseMinutes(value);
+						$scope.model = parse(sanitize(value));
 
 						if($scope.model) {
 							value = fsDate.duration($scope.model * 60, options);
 						}
 
 					} catch(e) {}
+
 					$scope.input = value;
 				}
 
 				$scope.validate = function(value) {
 
 					try {
-						parseMinutes(value);
+						parse(sanitize(value));
 					} catch(e) {
 						return e;
 					}
@@ -69,37 +68,41 @@
 					return true;
 				}
 
-	            function parseMinutes(string) {
+				function sanitize(value) {
+					if(value) {
+						value = value.trim().replace(/(\d+)\s+/g,'$1').replace(/\s+/,' ');
+
+						if(value.match(/^\d*(\.\d*)?$/))
+							value += 'm';
+					}
+
+					return value;
+				}
+
+	            function parse(string) {
 
 					if(!string)
 					  	return 0;
 
-					var string = new String(string);
-					var chunks = string.trim().match(/(\d*\.?\d*) ?[YyMdhms]?/g);
-
-					if(!chunks || chunks.length==0)
-					  	throw 'Invalid duration format';
-
 					var seconds = 0;
-					angular.forEach(chunks, function(chunk) {
+					angular.forEach(string.split(' '), function(chunk) {
 
-						var matches = chunk.match(/(\d*\.?\d*) ?([YMdhms]?)/);
+						var matches = chunk.match(/^(\d*\.?\d*)([YMdhms])$/);
 
-						if(matches.length==3) {
-							var unit = matches[2] ? matches[2] : 'm';
-							var factor = {
-								Y:60*60*24*365,
-								M:60*60*24*30.5,
-								d:60*60*24,
-								h:60*60,
-								m:60,
-								s:1
-							}[unit];
-
-							seconds += matches[1]*factor;
-						} else {
+						if(!matches) {
 							throw 'Invalid duration format';
 						}
+
+						var factor = {
+							Y:60*60*24*365,
+							M:60*60*24*30.5,
+							d:60*60*24,
+							h:60*60,
+							m:60,
+							s:1
+						}[matches[2]];
+
+						seconds += matches[1]*factor;
 					});
 
 					return seconds/60;

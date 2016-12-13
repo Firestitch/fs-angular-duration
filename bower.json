@@ -5,8 +5,8 @@
     "dist/duration.js"
   ],
   "dependencies": {
-    "fs-angular-util": "latest",
-    "fs-angular-date": "latest"
+    "fs-angular-util": "^1.0.0",
+    "fs-angular-date": "^1.0.0"
   },
   "authors": [
     "Firestitch Inc."
