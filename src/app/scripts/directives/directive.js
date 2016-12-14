@@ -40,7 +40,11 @@
             	options.precision = options.precision===undefined ? false : options.precision;
 
 				$scope.name = 'input_' + fsUtil.guid();
-				$scope.input = '';
+
+				$scope.model = fsUtil.int($scope.model);
+				if($scope.model) {
+					$scope.input = fsDate.duration($scope.model * 60, options);
+				}
 
 				$scope.change = function() {
 					var value = $scope.input;

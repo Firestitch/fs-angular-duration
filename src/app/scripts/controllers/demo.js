@@ -8,6 +8,7 @@
     	alert('Submitted');
     }
 
+    //$scope.duration = 500;
 	$scope.label = 'Duration!';
 	$scope.disabled = false;
     $scope.toggle = function() {
