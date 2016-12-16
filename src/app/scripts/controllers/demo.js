@@ -8,6 +8,10 @@
     	alert('Submitted');
     }
 
+    $scope.change = function() {
+    	console.log($scope.duration);
+    }
+
     //$scope.duration = 500;
 	$scope.label = 'Duration!';
 	$scope.disabled = false;

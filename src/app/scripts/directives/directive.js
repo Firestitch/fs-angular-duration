@@ -10,11 +10,12 @@
    * @param {string} fsClass The css class pass on to the md-input-container
    * @param {expression} fsDisabled An expression to enable/disable the input
    * @param {expression} fsRequired An expression to require the input for valiation
-   * @param {expression} fsOptions Options to pass to fsDate.duration for formatting the display value
+   * @param {object} fsOptions Options to pass to fsDate.duration for formatting the display value
+   * @param {expression} fsChange An expression evaluated when the duration input is changed
    */
 
     angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util'])
-    .directive('fsDuration', function(fsDate, fsUtil) {
+    .directive('fsDuration', function(fsDate, fsUtil, $timeout) {
         return {
             templateUrl: 'views/directives/duration.html',
             restrict: 'E',
@@ -25,6 +26,7 @@
               disabled: '=?fsDisabled',
               required: '=?fsRequired',
               options: '=?fsOptions',
+              onChange: '@?fsChange',
               class: '@?fsClass'
             },
             link: function($scope, element) {
@@ -54,6 +56,12 @@
 
 						if($scope.model) {
 							value = fsDate.duration($scope.model * 60, options);
+						}
+
+						if($scope.onChange) {
+							$timeout(function() {
+								$scope.$parent.$eval($scope.onChange);
+							});
 						}
 
 					} catch(e) {}
