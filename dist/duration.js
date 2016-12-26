@@ -12,7 +12,7 @@
    * @param {expression} fsDisabled An expression to enable/disable the input
    * @param {expression} fsRequired An expression to require the input for valiation
    * @param {object} fsOptions Options to pass to fsDate.duration for formatting the display value
-   * @param {expression} fsChange An expression evaluated when the duration input is chnaged
+   * @param {expression} fsChange An expression evaluated when the duration input is changed
    */
 
     angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util'])
@@ -30,7 +30,7 @@
               onChange: '@?fsChange',
               class: '@?fsClass'
             },
-            link: function($scope, element) {
+            link: function($scope, element, attr, model) {
             	angular.element(element[0].querySelector("input[type='text']")).data('scope',$scope);
             },
             controller: function($scope) {
@@ -44,19 +44,29 @@
 
 				$scope.name = 'input_' + fsUtil.guid();
 
-				$scope.model = fsUtil.int($scope.model);
-				if($scope.model) {
-					$scope.input = fsDate.duration($scope.model * 60, options);
-				}
+				$scope.$watch('model',function(nvalue,ovalue) {
+
+					if(!nvalue) {
+						$scope.input = '';
+						return;
+					}
+
+					var model = fsUtil.int(nvalue);
+					if(model) {
+						$scope.input = fsDate.duration(model * 60, options);
+					}
+
+				});
 
 				$scope.change = function() {
 					var value = $scope.input;
 					try {
 
-						$scope.model = parse(sanitize(value));
+						var model = parse(sanitize(value));
 
-						if($scope.model) {
-							value = fsDate.duration($scope.model * 60, options);
+						if(model) {
+							value = fsDate.duration(model * 60, options);
+							$scope.model = model;
 						}
 
 						if($scope.onChange) {
@@ -83,7 +93,10 @@
 
 				function sanitize(value) {
 					if(value) {
-						value = value.trim().replace(/(\d+)\s+/g,'$1').replace(/\s+/,' ');
+						value = value.trim()
+										.replace(/(\d+)\s+/g,'$1')
+										.replace(/\s+/,' ')
+										.replace(/^\./,'0.');
 
 						if(value.match(/^\d*(\.\d*)?$/))
 							value += 'm';
@@ -100,7 +113,7 @@
 					var seconds = 0;
 					angular.forEach(string.split(' '), function(chunk) {
 
-						var matches = chunk.match(/^(\d*\.?\d*)([YMdhms])$/);
+						var matches = chunk.match(/^(\d+\.?\d*)([YMdhms])$/);
 
 						if(!matches) {
 							throw 'Invalid duration format';

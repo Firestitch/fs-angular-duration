@@ -8,6 +8,12 @@
     	alert('Submitted');
     }
 
+    $scope.duration = "213";
+
+    $scope.update = function() {
+    	$scope.duration = "";
+    }
+
     $scope.change = function() {
     	console.log($scope.duration);
     }
