@@ -2,7 +2,8 @@
 <form fs-validate="submit()">
 	<fs-duration fs-label="{{label}}" fs-model="duration" fs-change="change($event)" fs-required="required" fs-disabled="disabled" fs-class="md-no-message"></fs-duration>
 
-	<h3>{{duration}}</h3>
+	<h3>{{duration}} | {{duration * 60 | fsDateDuration}}</h3>
+
 
 	<md-button type="submit">Submit</md-button>
 

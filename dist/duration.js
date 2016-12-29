@@ -31,6 +31,9 @@
               class: '@?fsClass'
             },
             link: function($scope, element, attr, model) {
+            	$scope.ngModel = angular.element(element[0].querySelector("input[type='text']")).controller('ngModel');
+
+            	//Used to pass the scope for fs-validate
             	angular.element(element[0].querySelector("input[type='text']")).data('scope',$scope);
             },
             controller: function($scope) {
@@ -47,37 +50,46 @@
 				$scope.$watch('model',function(nvalue,ovalue) {
 
 					if(!nvalue) {
-						$scope.input = '';
+						$scope.ngModel.$viewValue = '';
 						return;
 					}
 
 					var model = fsUtil.int(nvalue);
 					if(model) {
-						$scope.input = fsDate.duration(model * 60, options);
+						$scope.ngModel.$viewValue = fsDate.duration(model * 60, options);
 					}
 
 				});
 
 				$scope.change = function() {
-					var value = $scope.input;
-					try {
 
-						var model = parse(sanitize(value));
+					var value = $scope.ngModel.$viewValue;
 
-						if(model) {
-							value = fsDate.duration(model * 60, options);
-							$scope.model = model;
-						}
+					if($scope.ngModel.$viewValue) {
 
-						if($scope.onChange) {
-							$timeout(function() {
-								$scope.$parent.$eval($scope.onChange);
-							});
-						}
+						try {
 
-					} catch(e) {}
+							var model = parse(sanitize(value));
 
-					$scope.input = value;
+							if(model) {
+								value = fsDate.duration(model * 60, options);
+								$scope.model = model;
+							}
+
+							if($scope.onChange) {
+								$timeout(function() {
+									$scope.$parent.$eval($scope.onChange);
+								});
+							}
+
+						} catch(e) {}
+
+					} else {
+						$scope.model = '';
+					}
+
+					$scope.ngModel.$setViewValue(value);
+					$scope.ngModel.$render();
 				}
 
 				$scope.validate = function(value) {
