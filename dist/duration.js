@@ -47,16 +47,16 @@
 
 				$scope.name = 'input_' + fsUtil.guid();
 
-				$scope.$watch('model',function(nvalue,ovalue) {
+				$scope.$watch('model',function(nvalue, ovalue) {
 
 					if(!nvalue) {
-						$scope.ngModel.$viewValue = '';
+						$scope.input = '';
 						return;
 					}
 
 					var model = fsUtil.int(nvalue);
 					if(model) {
-						$scope.ngModel.$viewValue = fsDate.duration(model * 60, options);
+						$scope.input = fsDate.duration(model * 60, options);
 					}
 
 				});
