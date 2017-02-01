@@ -8,7 +8,7 @@
     	alert('Submitted');
     }
 
-    $scope.required =true;
+    $scope.required =0;
 
     $scope.duration = "213";
 
