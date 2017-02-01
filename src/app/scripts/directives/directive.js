@@ -32,12 +32,6 @@
             link: function($scope, element, attr, model) {
 
 	            var input = angular.element(element[0].querySelector('input[type="text"]'));
-	            //HACK to populate required attribute for an input. If populated in the template a template compile error is thrown
-	            if($scope.required) {
-	            	//HACK angular.element(input).attr('required','something-else') will produce required="required"
-	            	input[0].setAttribute('required',$scope.required);
-	            }
-
             	$scope.ngModel = input.controller('ngModel');
 
             	//Used to pass the scope for fs-validate
