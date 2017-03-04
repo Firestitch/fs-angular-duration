@@ -27,7 +27,13 @@
               required: '@?fsRequired',
               options: '=?fsOptions',
               onChange: '@?fsChange',
-              class: '@?fsClass'
+              class: '@?fsClass',
+              seconds: '=?fsSeconds',
+              minutes: '=?fsMinutes',
+              hours: '=?fsHours',
+              days: '=?fsDays',
+              months: '=?fsMonths',
+              years: '=?fsYears',
             },
             link: function($scope, element, attr, model) {
 
@@ -40,6 +46,31 @@
             controller: function($scope) {
 
             	var options = $scope.options || {};
+
+            	if($scope.seconds!==undefined) {
+            		options.seconds = $scope.seconds;
+            	}
+
+            	if($scope.minutes!==undefined) {
+            		options.minutes = $scope.minutes;
+            	}
+
+            	if($scope.hours!==undefined) {
+            		options.hours = $scope.hours;
+            	}
+
+            	if($scope.days!==undefined) {
+            		options.days = $scope.days;
+            	}
+
+            	if($scope.months!==undefined) {
+            		options.months = $scope.months;
+            	}
+
+            	if($scope.years!==undefined) {
+            		options.years = $scope.years;
+            	}
+
             	options.remainder = options.remainder===undefined ? 'string' : options.remainder;
             	options.seconds = options.seconds===undefined ? false: options.seconds;
             	options.months = options.months===undefined ? false : options.months;
