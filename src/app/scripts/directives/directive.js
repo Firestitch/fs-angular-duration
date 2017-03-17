@@ -94,6 +94,12 @@
 
 				});
 
+				$scope.keyup = function(e) {
+					if(e.keyCode==13) {
+						$scope.change();
+					}
+				}
+
 				$scope.change = function() {
 
 					var value = $scope.ngModel.$viewValue;
@@ -104,8 +110,12 @@
 
 							var model = parse(sanitize(value));
 
+							if(fsUtil.isNumeric(value)) {
+								model *= 60;
+							}
+
 							if(model) {
-								value = fsDate.duration(model * 60, options);
+								value = fsDate.duration(model,options);
 								$scope.model = model;
 							}
 

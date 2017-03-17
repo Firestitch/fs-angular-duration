@@ -4,8 +4,8 @@
 			ng-model="input"
 			aria-label="duration"
 			ng-disabled="disabled"
-			ng-model-options="{ updateOn: 'blur' }"
-			ng-change="change()"
+			ng-blur="change()"
+			ng-keyup="keyup($event)"
 			name="{{name}}"
 			required-condition="{{required}}"
 			custom="validate">

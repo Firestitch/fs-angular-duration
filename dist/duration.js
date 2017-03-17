@@ -76,7 +76,7 @@
             	options.seconds = options.seconds===undefined ? false: options.seconds;
             	options.months = options.months===undefined ? false : options.months;
             	options.years = options.years===undefined ? false : options.years;
-            	options.days = options.years===undefined ? false : options.years;
+            	options.days = options.days===undefined ? false : options.days;
             	options.precision = options.precision===undefined ? false : options.precision;
 
 				$scope.name = 'input_' + fsUtil.guid();
@@ -95,6 +95,12 @@
 
 				});
 
+				$scope.keyup = function(e) {
+					if(e.keyCode==13) {
+						$scope.change();
+					}
+				}
+
 				$scope.change = function() {
 
 					var value = $scope.ngModel.$viewValue;
@@ -105,8 +111,12 @@
 
 							var model = parse(sanitize(value));
 
+							if(fsUtil.isNumeric(value)) {
+								model *= 60;
+							}
+
 							if(model) {
-								value = fsDate.duration(model * 60, options);
+								value = fsDate.duration(model,options);
 								$scope.model = model;
 							}
 
@@ -200,9 +210,9 @@ angular.module('fs-angular-duration').run(['$templateCache', function($templateC
     "\n" +
     "\t\t\tng-disabled=\"disabled\"\r" +
     "\n" +
-    "\t\t\tng-model-options=\"{ updateOn: 'blur' }\"\r" +
+    "\t\t\tng-blur=\"change()\"\r" +
     "\n" +
-    "\t\t\tng-change=\"change()\"\r" +
+    "\t\t\tng-keyup=\"keyup($event)\"\r" +
     "\n" +
     "\t\t\tname=\"{{name}}\"\r" +
     "\n" +

@@ -5,7 +5,7 @@
   .controller('DemoCtrl', function ($interval,$scope) {
 
     $scope.submit = function() {
-    	alert('Submitted');
+    	//alert('Submitted');
     }
 
     $scope.required =0;
