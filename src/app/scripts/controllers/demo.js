@@ -17,6 +17,7 @@
     }
 
     $scope.change = function() {
+    	debugger;
     	console.log($scope.duration);
     }
 

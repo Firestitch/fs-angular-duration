@@ -1,6 +1,6 @@
 
 <form fs-validate="submit()">
-	<fs-duration fs-label="{{label}}" fs-model="duration" fs-change="change($event)" fs-required="required" fs-disabled="disabled" fs-class="md-no-message md-block"></fs-duration>
+	<fs-duration fs-label="{{label}} (change)" fs-model="duration" fs-change="change($event)" fs-required="required" fs-disabled="disabled" fs-class="md-no-message md-block"></fs-duration>
 
 	<h3>{{duration}} minutes | {{duration * 60 | fsDateGranularDuration}}</h3>
 

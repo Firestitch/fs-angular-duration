@@ -121,9 +121,10 @@
 							}
 
 							if($scope.onChange) {
-								$timeout(function() {
+								//Delay 10m to let the fs-valiation update re: $valid=undefined
+								setTimeout(function() {
 									$scope.$parent.$eval($scope.onChange);
-								});
+								},10);
 							}
 
 						} catch(e) {}
