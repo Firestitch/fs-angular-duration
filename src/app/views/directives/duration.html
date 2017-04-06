@@ -8,6 +8,6 @@
 			ng-keyup="keyup($event)"
 			name="{{name}}"
 			required-condition="{{required}}"
-			custom="validate">
+			validator="validate($value)">
 	<input type="hidden" ng-model="model">
 </md-input-container>

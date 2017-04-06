@@ -42,7 +42,7 @@
             	$scope.ngModel = input.controller('ngModel');
 
             	//Used to pass the scope for fs-validate
-            	input.data('custom-scope',$scope);
+            	input.data('validator-scope',$scope);
             },
             controller: function($scope) {
 
@@ -120,13 +120,6 @@
 								$scope.model = model;
 							}
 
-							if($scope.onChange) {
-								//Delay 10m to let the fs-valiation update re: $valid=undefined
-								setTimeout(function() {
-									$scope.$parent.$eval($scope.onChange);
-								},10);
-							}
-
 						} catch(e) {}
 
 					} else {
@@ -135,6 +128,10 @@
 
 					$scope.ngModel.$setViewValue(value);
 					$scope.ngModel.$render();
+
+					if($scope.onChange) {
+						$scope.$parent.$eval($scope.onChange);
+					}
 				}
 
 				$scope.validate = function(value) {
@@ -219,7 +216,7 @@ angular.module('fs-angular-duration').run(['$templateCache', function($templateC
     "\n" +
     "\t\t\trequired-condition=\"{{required}}\"\r" +
     "\n" +
-    "\t\t\tcustom=\"validate\">\r" +
+    "\t\t\tvalidator=\"validate($value)\">\r" +
     "\n" +
     "\t<input type=\"hidden\" ng-model=\"model\">\r" +
     "\n" +
