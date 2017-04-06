@@ -129,7 +129,10 @@
 					$scope.ngModel.$render();
 
 					if($scope.onChange) {
-						$scope.$parent.$eval($scope.onChange);
+						//Timeout needed to updated the model
+						setTimeout(function() {
+							$scope.$parent.$eval($scope.onChange);
+						});
 					}
 				}
 

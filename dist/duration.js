@@ -42,7 +42,7 @@
             	$scope.ngModel = input.controller('ngModel');
 
             	//Used to pass the scope for fs-validate
-            	input.data('validator-scope',$scope);
+            	input.data('validation-scope',$scope);
             },
             controller: function($scope) {
 
@@ -130,7 +130,10 @@
 					$scope.ngModel.$render();
 
 					if($scope.onChange) {
-						$scope.$parent.$eval($scope.onChange);
+						//Timeout needed to updated the model
+						setTimeout(function() {
+							$scope.$parent.$eval($scope.onChange);
+						});
 					}
 				}
 
