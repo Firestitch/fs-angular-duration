@@ -41,7 +41,7 @@
             	$scope.ngModel = input.controller('ngModel');
 
             	//Used to pass the scope for fs-validate
-            	input.data('validation-scope',$scope);
+            	input.data('validator-scope',$scope);
             },
             controller: function($scope) {
 
