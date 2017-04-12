@@ -34,6 +34,7 @@
               days: '=?fsDays',
               months: '=?fsMonths',
               years: '=?fsYears',
+              hint: '@fsHint'
             },
             link: function($scope, element, attr, model) {
 
@@ -77,6 +78,7 @@
             	options.years = options.years===undefined ? false : options.years;
             	options.days = options.days===undefined ? false : options.days;
             	options.precision = options.precision===undefined ? false : options.precision;
+            	options.unit = 'minute';
 
 				$scope.name = 'input_' + fsUtil.guid();
 
@@ -89,7 +91,7 @@
 
 					var model = fsUtil.int(nvalue);
 					if(model) {
-						$scope.input = fsDate.duration(model * 60, options);
+						$scope.input = fsDate.duration(model, options);
 					}
 
 				});
@@ -109,10 +111,6 @@
 						try {
 
 							var model = parse(sanitize(value));
-
-							if(fsUtil.isNumeric(value)) {
-								model *= 60;
-							}
 
 							if(model) {
 								value = fsDate.duration(model,options);
@@ -155,7 +153,7 @@
 										.replace(/^\./,'0.');
 
 						if(value.match(/^\d*(\.\d*)?$/))
-							value += 'm';
+							value += 'h';
 					}
 
 					return value;
@@ -176,11 +174,11 @@
 						}
 
 						var factor = {
-							Y:60*60*24*365,
-							M:60*60*24*30.5,
-							d:60*60*24,
-							h:60*60,
-							m:60,
+							Y:fsDate.SECONDS_YEAR,
+							M:fsDate.SECONDS_MONTH,
+							d:fsDate.SECONDS_DAY,
+							h:fsDate.SECONDS_HOUR,
+							m:fsDate.SECONDS_MINUTE,
 							s:1
 						}[matches[2]];
 
