@@ -11,7 +11,8 @@
     "angular-ui-router": "0.3.2",
 	"fs-angular-util": "^1.0.0",
     "fs-angular-date": "^1.0.0",
-    "fs-angular-validate": "^1.0.0"
+    "fs-angular-validate": "^1.0.0",
+    "fs-angular-element": ">=1.1.0"
   },
   "resolutions": {
     "angular": "1.6.2"

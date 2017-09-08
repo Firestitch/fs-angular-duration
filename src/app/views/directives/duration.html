@@ -5,8 +5,9 @@
 			aria-label="duration"
 			ng-disabled="disabled"
 			ng-blur="change()"
-			ng-keyup="keyup($event)"
+			ng-keydown="keydown($event)"
 			name="{{name}}"
+			fs-element="element"
 			required-condition="{{required}}"
 			validator="validate($value)">
 	<div class="hint">{{hint}}</div>

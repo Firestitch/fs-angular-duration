@@ -15,7 +15,7 @@
    * @param {expression} fsChange An expression evaluated when the duration input is changed
    */
 
-    angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util'])
+    angular.module('fs-angular-duration',['fs-angular-date','fs-angular-util','fs-angular-element'])
     .directive('fsDuration', function(fsDate, fsUtil, $timeout) {
         return {
             templateUrl: 'views/directives/duration.html',
@@ -46,7 +46,7 @@
             	input.data('validator-scope',$scope);
             },
             controller: function($scope) {
-
+            	$scope.element = {};
             	var options = $scope.options || {};
 
             	if($scope.seconds!==undefined) {
@@ -97,9 +97,10 @@
 
 				});
 
-				$scope.keyup = function(e) {
+				$scope.keydown = function(e) {
 					if(e.keyCode==13) {
-						$scope.change();
+						$scope.element.blur();
+						$scope.element.focus();
 					}
 				}
 
@@ -148,7 +149,8 @@
 
 				function sanitize(value) {
 					if(value) {
-						value = value.trim()
+						value = fsUtil.string(value)
+										.trim()
 										.replace(/(\d+)\s+/g,'$1')
 										.replace(/\s+/,' ')
 										.replace(/^\./,'0.');
@@ -211,9 +213,11 @@ angular.module('fs-angular-duration').run(['$templateCache', function($templateC
     "\n" +
     "\t\t\tng-blur=\"change()\"\r" +
     "\n" +
-    "\t\t\tng-keyup=\"keyup($event)\"\r" +
+    "\t\t\tng-keydown=\"keydown($event)\"\r" +
     "\n" +
     "\t\t\tname=\"{{name}}\"\r" +
+    "\n" +
+    "\t\t\tfs-element=\"element\"\r" +
     "\n" +
     "\t\t\trequired-condition=\"{{required}}\"\r" +
     "\n" +

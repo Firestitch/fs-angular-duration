@@ -1,13 +1,13 @@
 
 <form fs-validate="submit()">
-	<fs-duration fs-label="{{label}} (change)" fs-model="duration" fs-change="change($event)" fs-required="required" fs-disabled="disabled" fs-class="md-no-message md-block" fs-hint="{{duration}} minutes | {{duration * 60 | fsDateGranularDuration}}">></fs-duration>
-
+	<fs-duration fs-label="{{label}} (change)" fs-model="duration" fs-change="change($event)" fs-required="required" fs-disabled="disabled" fs-class="md-no-message md-block" fs-shint="{{duration | fsDateGranularDuration}}">></fs-duration>
+<!--
 	<fs-duration fs-label="No days" fs-model="duration1" fs-days="false" fs-class="md-block" fs-hint="{{duration1}} minutes">></fs-duration>
 
 	<fs-duration fs-label="Only hours" fs-model="duration2" fs-days="false" fs-minutes="false" fs-class="md-block" fs-hint="{{duration2}} minutes"></fs-duration>
 
 	<fs-duration fs-label="Everything" fs-model="duration3" fs-seconds="true" fs-days="true" fs-months="true" fs-years="true" fs-class="md-block" fs-hint="{{duration3}} minutes">></fs-duration>
-
+ -->
 	<md-button type="submit">Submit</md-button>
 
 	<a href ng-click="toggle()">Toggle</a>

@@ -5,7 +5,7 @@
   .controller('DemoCtrl', function ($interval,$scope) {
 
     $scope.submit = function() {
-    	//alert('Submitted');
+    	console.log('Submitted: ' + $scope.duration);
     }
 
     $scope.required =0;
@@ -18,7 +18,7 @@
 
     $scope.change = function() {
     	//debugger;
-    	console.log($scope.duration);
+    	console.log('Change: ' + $scope.duration);
     }
 
     //$scope.duration = 500;
